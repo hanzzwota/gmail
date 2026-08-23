@@ -10,7 +10,7 @@ export interface User {
   danaNumber: string;
   danaAccountName?: string;
   saldo: number;
-  status: 'active' | 'blocked';
+  status: 'active' | 'blocked' | 'bug_robot';
   blockedReason?: string;
   qualityScore: number; // Trusted percentage (0-100)
   trustBadge: string;
@@ -110,7 +110,7 @@ export interface ActivityLog {
   id: string;
   accountId?: string;
   userId?: string;
-  action: 'auto_block' | 'manual_block' | 'approve' | 'reject' | 'settings_update' | 'withdrawal' | 'stock_add' | 'mark_bug_robot';
+  action: 'auto_block' | 'manual_block' | 'approve' | 'reject' | 'settings_update' | 'withdrawal' | 'stock_add' | 'bug_robot' | 'deposit_toggle';
   timestamp: string;
   description: string;
 }
