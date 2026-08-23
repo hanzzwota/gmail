@@ -307,9 +307,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const saved = getSavedStorage(STORAGE_KEY_USER, 'zero99_current_user_v4');
-    return saved || INITIAL_USERS[1]; // Default to Hanzz Wota
-  });
+  const saved = getSavedStorage(STORAGE_KEY_USER, 'zero99_current_user_v4');
+  return saved || null; // ← Kalau tidak ada session, return null
+});
 
   const [submissions, setSubmissions] = useState<GmailSubmission[]>(() => {
     return getSavedStorage(STORAGE_KEY_SUBMISSIONS, 'zero99_submissions_v4') || [];
