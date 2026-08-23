@@ -31,7 +31,7 @@ export interface GmailAccountItem {
   password: string;
   recoveryEmail?: string;
   twoFaBackup?: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'blocked' | 'sold';
+  status: 'pending' | 'accepted' | 'rejected' | 'blocked' | 'sold' | 'bug_robot';
   rejectReason?: string;
   trusted: number; // 0 - 100%
   price: number;
@@ -110,7 +110,7 @@ export interface ActivityLog {
   id: string;
   accountId?: string;
   userId?: string;
-  action: 'auto_block' | 'manual_block' | 'approve' | 'reject' | 'settings_update' | 'withdrawal' | 'stock_add';
+  action: 'auto_block' | 'manual_block' | 'approve' | 'reject' | 'settings_update' | 'withdrawal' | 'stock_add' | 'mark_bug_robot';
   timestamp: string;
   description: string;
 }
