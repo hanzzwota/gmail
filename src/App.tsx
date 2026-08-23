@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
@@ -42,6 +42,17 @@ const AppContent: React.FC = () => {
     setIsAuthOpen(true);
   };
 
+  // 🔒 Global Route Guard: Require login for all routes except auth
+  const publicTabs = ['beranda'];
+  const isPublicRoute = publicTabs.includes(activeTab);
+  const needsAuth = !currentUser && !isPublicRoute;
+
+  useEffect(() => {
+    if (needsAuth) {
+      handleOpenAuth('login');
+    }
+  }, [activeTab, currentUser]);
+
   // If in Admin Panel View
   if (isAdminMode && activeTab === 'admin') {
     return (
@@ -75,7 +86,7 @@ const AppContent: React.FC = () => {
           />
         )}
 
-        {activeTab === 'stor' && (
+        {activeTab === 'stor' && currentUser && (
           <StorView
             onOpenRules={() => setIsRulesOpen(true)}
             onOpenSaluranWA={handleOpenSaluranWA}
@@ -83,19 +94,19 @@ const AppContent: React.FC = () => {
           />
         )}
 
-        {activeTab === 'saldo' && <SaldoView />}
+        {activeTab === 'saldo' && currentUser && <SaldoView />}
 
-        {activeTab === 'riwayat' && <RiwayatView />}
+        {activeTab === 'riwayat' && currentUser && <RiwayatView />}
 
-        {activeTab === 'profil' && <ProfilView />}
+        {activeTab === 'profil' && currentUser && <ProfilView />}
 
-        {activeTab === 'beli-akun' && <BeliAkunView />}
+        {activeTab === 'beli-akun' && currentUser && <BeliAkunView />}
 
-        {activeTab === 'akun-saya' && <AkunSayaView />}
+        {activeTab === 'akun-saya' && currentUser && <AkunSayaView />}
       </main>
 
       {/* Bottom Floating Navigation */}
-      <BottomNav />
+      {currentUser && <BottomNav />}
 
       {/* Auth Modal (Login / Register / Google OAuth / Demo Credentials) */}
       <AuthModal
