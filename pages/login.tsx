@@ -39,6 +39,9 @@ export default function LoginPage() {
           onError={() => {
             console.log('Login Failed');
           }}
+          // Force account chooser so users must select an account every time
+          // This adds the OAuth parameter prompt=select_account
+          discoverOauthParams={{ prompt: 'select_account' }}
         />
       </div>
     </div>
