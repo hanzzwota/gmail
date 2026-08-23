@@ -27,22 +27,21 @@ export default function LoginPage() {
     }
   };
 
-  // Fallback: use useGoogleLogin hook to force prompt if the <GoogleLogin /> discoverOauthParams isn't honored
+  // Use auth-code flow as the primary fallback because it reliably supports prompt=select_account
   const loginWithHook = useGoogleLogin({
-    flow: 'implicit', // use implicit flow to get id_token/credential in client (same behavior as GoogleLogin component)
+    flow: 'auth-code',
     prompt: 'select_account',
-    onSuccess: async (tokenResponse) => {
-      // Depending on flow you may receive access_token or credential; the react-oauth returns credential in GoogleLogin
-      // For the hook/implicit flow, tokenResponse may contain access_token; however we still send what we receive to backend for verification.
-      const credential = (tokenResponse as any).credential || (tokenResponse as any).access_token || null;
-      if (!credential) {
-        console.error('No credential from hook login', tokenResponse);
+    onSuccess: async (codeResponse) => {
+      const code = (codeResponse as any).code;
+      if (!code) {
+        console.error('No code returned from auth-code flow', codeResponse);
         return;
       }
-      const res = await fetch('/api/auth/google', {
+
+      const res = await fetch('/api/auth/google/code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ credential }),
+        body: JSON.stringify({ code }),
       });
 
       if (res.ok) {
@@ -50,7 +49,7 @@ export default function LoginPage() {
         const from = url.searchParams.get('from') || '/dashboard';
         Router.replace(from);
       } else {
-        console.error('Auth failed (hook)');
+        console.error('Auth failed (code exchange)');
       }
     },
     onError: () => console.error('Login failed (hook)'),
@@ -68,14 +67,13 @@ export default function LoginPage() {
           onError={() => {
             console.log('Login Failed');
           }}
-          // Force account chooser so users must select an account every time
-          // This adds the OAuth parameter prompt=select_account
+          // Keep discoverOauthParams but fallback to useGoogleLogin auth-code flow
           discoverOauthParams={{ prompt: 'select_account' }}
         />
       </div>
 
       <div>
-        {/* Fallback button: if the component auto-selects, use this button which forces the prompt via useGoogleLogin hook */}
+        {/* Primary fallback: use auth-code hook which reliably supports prompt */}
         <button
           onClick={() => loginWithHook()}
           style={{ padding: '8px 16px', cursor: 'pointer' }}
